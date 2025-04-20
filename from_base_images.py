@@ -118,7 +118,11 @@ def main():
     # Step 4: Save
     output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, "lineup_img_based.png")
+    # Save the final image
+    # add timestamp to filename
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    output_filename = f"lineup_img_based_{timestamp}.png"
+    output_path = os.path.join(output_dir, output_filename)
     final.save(output_path)
     print(f"✅ Saved: {output_path}")
 
