@@ -1,0 +1,5 @@
+pytest-playwright
+playwright~=1.51.0
+beautifulsoup4~=4.13.4
+Pillow
+cairosvg

@@ -1,0 +1,402 @@
+.group-icon {
+  position: absolute;
+  height: 127.99%;
+  width: 66.44%;
+  top: -15.41%;
+  right: 23.83%;
+  bottom: -12.57%;
+  left: 9.72%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  object-fit: contain;
+}
+.starting-xi {
+  position: absolute;
+  top: 3.125rem;
+  left: 3.375rem;
+  font-size: 12.5rem;
+  font-weight: 900;
+  text-align: left;
+}
+.union-icon {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  width: 32.438rem;
+  height: 47rem;
+  opacity: 0.1;
+}
+.union-icon1 {
+  position: absolute;
+  top: calc(50% - 337px);
+  left: calc(50% - 223.5px);
+  width: 27.938rem;
+  height: 42.125rem;
+}
+.group-child {
+  position: absolute;
+  top: 0rem;
+  left: calc(50% - 39px);
+  border-radius: 50%;
+  background-color: #db0007;
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 16px);
+  font-weight: 800;
+}
+.ellipse-parent {
+  position: absolute;
+  top: 38.625rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div1 {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 8px);
+  font-weight: 800;
+}
+.ellipse-group {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% - 98.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-container {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% + 21.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div3 {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 15px);
+  font-weight: 800;
+}
+.group-div {
+  position: absolute;
+  top: 16.438rem;
+  left: calc(50% - 167.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent1 {
+  position: absolute;
+  top: 16.438rem;
+  left: calc(50% + 90.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent2 {
+  position: absolute;
+  top: 22.625rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent3 {
+  position: absolute;
+  top: 2.875rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div7 {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 14px);
+  font-weight: 800;
+}
+.ellipse-parent4 {
+  position: absolute;
+  top: 6.5rem;
+  left: calc(50% + 113.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div8 {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 12px);
+  font-weight: 800;
+}
+.ellipse-parent5 {
+  position: absolute;
+  top: 6.5rem;
+  left: calc(50% - 190.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent6 {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% + 141.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.div10 {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 17px);
+  font-weight: 800;
+}
+.ellipse-parent7 {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% - 218.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.union-parent {
+  position: absolute;
+  top: 22.75rem;
+  left: 31.813rem;
+  background: radial-gradient(50% 50% at 50% 50%, #c8a75f, #8d7643);
+  border: 2px solid #d7ecff;
+  box-sizing: border-box;
+  width: 32.688rem;
+  height: 47.25rem;
+  overflow: hidden;
+  font-size: 4.125rem;
+}
+.layer1-icon {
+  position: absolute;
+  height: 85.29%;
+  width: 85.57%;
+  top: 7.43%;
+  right: 7.29%;
+  bottom: 7.29%;
+  left: 7.14%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.premier-league {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  overflow: hidden;
+}
+.premier-league-wrapper {
+  position: absolute;
+  top: 3.125rem;
+  right: 0rem;
+  background-color: #fff;
+  width: 8.75rem;
+  height: 8.75rem;
+  overflow: hidden;
+}
+.group-icon1 {
+  position: absolute;
+  height: 85.64%;
+  width: 72.71%;
+  top: 7.14%;
+  right: 13.63%;
+  bottom: 7.21%;
+  left: 13.66%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.premier-league-container {
+  position: absolute;
+  top: 3.125rem;
+  right: 8.75rem;
+  background-color: #023474;
+  width: 8.75rem;
+  height: 8.75rem;
+  overflow: hidden;
+}
+.image-3-icon {
+  position: absolute;
+  top: 80.625rem;
+  right: 3.313rem;
+  width: 14.188rem;
+  height: 1.438rem;
+  object-fit: cover;
+}
+.div11 {
+  position: absolute;
+  top: 0.875rem;
+  left: 0rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+}
+.abcde {
+  position: absolute;
+  top: 0rem;
+  left: 2.563rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.parent {
+  position: absolute;
+  top: 14.875rem;
+  left: 4.75rem;
+  width: 10.5rem;
+  height: 4.563rem;
+}
+.abcdef {
+  position: absolute;
+  top: 0rem;
+  left: 2.688rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.group {
+  position: absolute;
+  top: 36.125rem;
+  left: 4.625rem;
+  width: 11.938rem;
+  height: 4.563rem;
+}
+.container {
+  position: absolute;
+  top: 20.188rem;
+  left: 4.625rem;
+  width: 13.563rem;
+  height: 4.563rem;
+}
+.parent1 {
+  position: absolute;
+  top: 41.438rem;
+  left: 4.625rem;
+  width: 16rem;
+  height: 4.563rem;
+}
+.parent2 {
+  position: absolute;
+  top: 57.375rem;
+  left: 4.625rem;
+  width: 10.625rem;
+  height: 4.563rem;
+}
+.parent3 {
+  position: absolute;
+  top: 25.5rem;
+  left: 4.625rem;
+  width: 9.25rem;
+  height: 4.563rem;
+}
+.abcd1 {
+  position: absolute;
+  top: 0rem;
+  left: 2.625rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.parent4 {
+  position: absolute;
+  top: 46.75rem;
+  left: 4.688rem;
+  width: 9.188rem;
+  height: 4.563rem;
+}
+.abcdefgh {
+  position: absolute;
+  top: 0rem;
+  left: 3.063rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.parent5 {
+  position: absolute;
+  top: 62.688rem;
+  left: 4.25rem;
+  width: 15.563rem;
+  height: 4.563rem;
+}
+.abcdefghijk {
+  position: absolute;
+  top: 0rem;
+  left: 2.75rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.parent6 {
+  position: absolute;
+  top: 30.813rem;
+  left: 4.563rem;
+  width: 19.375rem;
+  height: 4.563rem;
+}
+.parent7 {
+  position: absolute;
+  top: 52.063rem;
+  left: 4.625rem;
+  width: 22.813rem;
+  height: 4.563rem;
+}
+.abcdefg1 {
+  position: absolute;
+  top: 0rem;
+  left: 2.938rem;
+  font-size: 6.5rem;
+  line-height: 7.589rem;
+  font-weight: 900;
+  text-align: left;
+}
+.parent8 {
+  position: absolute;
+  top: 68rem;
+  left: 4.375rem;
+  width: 13.813rem;
+  height: 4.563rem;
+}
+.subs {
+  position: absolute;
+  top: 74.441rem;
+  left: 4.375rem;
+  font-size: 2.27rem;
+  line-height: 8.854rem;
+  font-weight: 800;
+  font-family: "Open Sans";
+  text-align: left;
+}
+.player-player-player {
+  margin: 0;
+}
+.player-player-player-container {
+  position: absolute;
+  top: 76.738rem;
+  left: 4.375rem;
+  font-size: 1.564rem;
+  line-height: 1.564rem;
+  font-weight: 600;
+  font-family: "Open Sans";
+  text-align: left;
+}
+.arsenal {
+  width: 100%;
+  position: relative;
+  background: radial-gradient(50% 50% at 50% 50%, #ff0e16, #db0007);
+  height: 84.375rem;
+  overflow: hidden;
+  text-align: center;
+  font-size: 4rem;
+  color: #fff;
+  font-family: Morganite;
+}

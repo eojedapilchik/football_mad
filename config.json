@@ -1,0 +1,20 @@
+{
+  "field_color": "#917945",
+  "circle_color": "#d00000",
+  "text_color": "#ffffff",
+  "number_font_size": 16,
+  "circle_radius": 20,
+  "positions": [
+    {"number": 22, "x": 0.5, "y": 0.9},
+    {"number": 2, "x": 0.6, "y": 0.75},
+    {"number": 6, "x": 0.4, "y": 0.75},
+    {"number": 49, "x": 0.2, "y": 0.75},
+    {"number": 12, "x": 0.8, "y": 0.75},
+    {"number": 5, "x": 0.5, "y": 0.6},
+    {"number": 8, "x": 0.7, "y": 0.5},
+    {"number": 41, "x": 0.3, "y": 0.5},
+    {"number": 11, "x": 0.2, "y": 0.35},
+    {"number": 19, "x": 0.8, "y": 0.35},
+    {"number": 29, "x": 0.5, "y": 0.2}
+  ]
+}

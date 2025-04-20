@@ -1,0 +1,120 @@
+.union-icon {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  width: 32.438rem;
+  height: 47rem;
+  opacity: 0.1;
+}
+.union-icon1 {
+  position: absolute;
+  top: calc(50% - 337px);
+  left: calc(50% - 223.5px);
+  width: 27.938rem;
+  height: 42.125rem;
+}
+.group-child {
+  position: absolute;
+  top: 0rem;
+  left: calc(50% - 39px);
+  border-radius: 50%;
+  background-color: #005daa;
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.xx {
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 16px);
+  font-weight: 800;
+}
+.ellipse-parent {
+  position: absolute;
+  top: 38.625rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-group {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% - 98.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-container {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% + 21.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.group-div {
+  position: absolute;
+  top: 16.438rem;
+  left: calc(50% - 167.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent1 {
+  position: absolute;
+  top: 16.438rem;
+  left: calc(50% + 90.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent2 {
+  position: absolute;
+  top: 22.625rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent3 {
+  position: absolute;
+  top: 2.875rem;
+  left: calc(50% - 38.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent4 {
+  position: absolute;
+  top: 6.5rem;
+  left: calc(50% + 113.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent5 {
+  position: absolute;
+  top: 6.5rem;
+  left: calc(50% - 190.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent6 {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% + 141.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.ellipse-parent7 {
+  position: absolute;
+  top: 32.5rem;
+  left: calc(50% - 218.5px);
+  width: 4.875rem;
+  height: 4.875rem;
+}
+.union-parent {
+  width: 100%;
+  position: relative;
+  background: radial-gradient(50% 50% at 50% 50%, #ffc63a, #eea900);
+  border: 2px solid #727272;
+  box-sizing: border-box;
+  height: 47.25rem;
+  overflow: hidden;
+  text-align: center;
+  font-size: 4.125rem;
+  color: #fff;
+  font-family: Morganite;
+}
