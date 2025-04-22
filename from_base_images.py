@@ -8,7 +8,7 @@ SCALE = 2  # You can change to 3 for even smoother rendering
 
 
 
-
+FONT_PATH = "fonts/ARIALBD.ttf"
 
 def hex_to_rgb(hex_color):
     hex_color = hex_color.strip()
@@ -76,7 +76,7 @@ def get_formation_positions(config):
 def draw_players(image, config, offset=(0, 0), field_area_size=None):
     draw = ImageDraw.Draw(image)
     font_size = config.get("number_font_size", 32) * SCALE
-    font_path = config.get("font_path", "fonts/Morganite-Bold.ttf")
+    font_path = config.get("font_path", FONT_PATH)
 
     # Try font from config, then Arial Bold, then fallback
     try:
