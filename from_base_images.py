@@ -1,9 +1,13 @@
 from PIL import Image, ImageDraw, ImageFont
+from formations import formations
 import json
 import os
 import time
 
 SCALE = 2  # You can change to 3 for even smoother rendering
+
+
+
 
 
 def hex_to_rgb(hex_color):
@@ -45,6 +49,30 @@ def create_field_with_layers(field_color_hex, stripes_path, lines_path):
     return canvas, lines_offset, lines_scaled.size  # Return offset and field area for placing players
 
 
+def get_formation_positions(config):
+
+    positions = config.get("positions", [])
+    flip_vertical = config.get("flip_vertical", False)
+    if not positions and "formation" in config:
+        formation_code = config["formation"]
+        if formation_code not in formations:
+            raise ValueError(f"Formation '{formation_code}' is not defined.")
+
+        coords = formations[formation_code]
+        positions = [
+            {"number": i + 1, "x": x, "y": y}
+            for i, (x, y) in enumerate(coords)
+        ]
+        print(f"✅ Loaded formation '{formation_code}' with {len(coords)} players.")
+
+    if len(positions) < 11:
+        raise ValueError("Not enough players defined. A full lineup requires 11 players.")
+
+    if flip_vertical:
+        for pos in positions:
+            pos["y"] = 1.0 - pos["y"]
+    return positions
+
 def draw_players(image, config, offset=(0, 0), field_area_size=None):
     draw = ImageDraw.Draw(image)
     font_size = config.get("number_font_size", 32) * SCALE
@@ -65,7 +93,8 @@ def draw_players(image, config, offset=(0, 0), field_area_size=None):
     fw, fh = field_area_size or image.size
     radius = config.get("circle_radius", 40) * SCALE
 
-    for player in config["positions"]:
+    positions = get_formation_positions(config)
+    for player in positions:
         x = int(player["x"] * fw) + ox
         y = int(player["y"] * fh) + oy
         number = str(player["number"])
@@ -98,15 +127,11 @@ def paste_centered(base_img, overlay_img):
     return offset  # Used to shift player coordinates
 
 
-def main():
-    with open("config.json") as f:
-        config = json.load(f)
-
-    # Step 1: Create background and apply overlays
+def generate_lineup_from_config(config):
     field_img, offset, field_area_size = create_field_with_layers(
         config["field_color"],
         "field_base.png",
-        "FieldLines.png"
+        "FieldLines.png",
     )
 
     # Step 2: Draw players on high-res image
@@ -115,11 +140,17 @@ def main():
     # Step 3: Downscale for smoothness
     final = final.resize((final.width // SCALE, final.height // SCALE), Image.LANCZOS)
 
-    # Step 4: Save
+    return final  # Return PIL image
+
+
+def main():
+    with open("config.json") as f:
+        config = json.load(f)
+
+    final = generate_lineup_from_config(config)
+
     output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
-    # Save the final image
-    # add timestamp to filename
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     output_filename = f"lineup_img_based_{timestamp}.png"
     output_path = os.path.join(output_dir, output_filename)
