@@ -1,21 +1,25 @@
-from PIL import Image, ImageDraw, ImageFont
-from formations import formations
+from __future__ import annotations
+
 import json
 import os
 import time
 
-SCALE = 2  # You can change to 3 for even smoother rendering
+from PIL import Image, ImageDraw, ImageFont
 
+from formations import formations
+
+SCALE = 2  # You can change to 3 for even smoother rendering
 
 
 FONT_PATH = "fonts/ARIALBD.ttf"
 
+
 def hex_to_rgb(hex_color):
     hex_color = hex_color.strip()
-    if not hex_color.startswith('#') or len(hex_color) not in [4, 7]:
+    if not hex_color.startswith("#") or len(hex_color) not in [4, 7]:
         raise ValueError(f"Invalid hex color: {hex_color}")
-    hex_color = hex_color.lstrip('#')
-    return tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+    hex_color = hex_color.lstrip("#")
+    return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
 
 
 def create_field_with_layers(field_color_hex, stripes_path, lines_path):
@@ -29,24 +33,32 @@ def create_field_with_layers(field_color_hex, stripes_path, lines_path):
     print(f"✅ Created canvas with size {canvas_size} and color {field_color_hex}")
 
     # Center original-sized stripes onto canvas
-    stripes_scaled = stripes.resize((stripes.width * SCALE, stripes.height * SCALE), Image.LANCZOS)
+    stripes_scaled = stripes.resize(
+        (stripes.width * SCALE, stripes.height * SCALE), Image.LANCZOS
+    )
     stripes_offset = (
         (canvas_size[0] - stripes_scaled.width) // 2,
-        (canvas_size[1] - stripes_scaled.height) // 2
+        (canvas_size[1] - stripes_scaled.height) // 2,
     )
     canvas.alpha_composite(stripes_scaled, dest=stripes_offset)
     print(f"✅ Centered striped base at offset {stripes_offset}")
 
     # Center original-sized field lines onto canvas
-    lines_scaled = lines.resize((lines.width * SCALE, lines.height * SCALE), Image.LANCZOS)
+    lines_scaled = lines.resize(
+        (lines.width * SCALE, lines.height * SCALE), Image.LANCZOS
+    )
     lines_offset = (
         (canvas_size[0] - lines_scaled.width) // 2,
-        (canvas_size[1] - lines_scaled.height) // 2
+        (canvas_size[1] - lines_scaled.height) // 2,
     )
     canvas.alpha_composite(lines_scaled, dest=lines_offset)
     print(f"✅ Centered field lines at offset {lines_offset}")
 
-    return canvas, lines_offset, lines_scaled.size  # Return offset and field area for placing players
+    return (
+        canvas,
+        lines_offset,
+        lines_scaled.size,
+    )  # Return offset and field area for placing players
 
 
 def get_formation_positions(config):
@@ -60,18 +72,20 @@ def get_formation_positions(config):
 
         coords = formations[formation_code]
         positions = [
-            {"number": i + 1, "x": x, "y": y}
-            for i, (x, y) in enumerate(coords)
+            {"number": i + 1, "x": x, "y": y} for i, (x, y) in enumerate(coords)
         ]
         print(f"✅ Loaded formation '{formation_code}' with {len(coords)} players.")
 
     if len(positions) < 11:
-        raise ValueError("Not enough players defined. A full lineup requires 11 players.")
+        raise ValueError(
+            "Not enough players defined. A full lineup requires 11 players."
+        )
 
     if flip_vertical:
         for pos in positions:
             pos["y"] = 1.0 - pos["y"]
     return positions
+
 
 def draw_players(image, config, offset=(0, 0), field_area_size=None):
     draw = ImageDraw.Draw(image)
@@ -81,11 +95,11 @@ def draw_players(image, config, offset=(0, 0), field_area_size=None):
     # Try font from config, then Arial Bold, then fallback
     try:
         font = ImageFont.truetype(font_path, font_size)
-    except IOError:
+    except OSError:
         try:
             font = ImageFont.truetype("arialbd.ttf", font_size)  # Windows Arial Bold
             print("⚠️ Using Arial Bold fallback font.")
-        except IOError:
+        except OSError:
             print("⚠️ Could not load any font, using default.")
             font = ImageFont.load_default()
 
@@ -100,7 +114,10 @@ def draw_players(image, config, offset=(0, 0), field_area_size=None):
         number = str(player["number"])
 
         # Draw player circle
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=config["circle_color"])
+        draw.ellipse(
+            (x - radius, y - radius, x + radius, y + radius),
+            fill=config["circle_color"],
+        )
 
         # Center the number in the circle using textbbox
         bbox = draw.textbbox((0, 0), number, font=font)
@@ -113,8 +130,6 @@ def draw_players(image, config, offset=(0, 0), field_area_size=None):
 
     print("✅ Players drawn on field.")
     return image
-
-
 
 
 def paste_centered(base_img, overlay_img):
@@ -135,7 +150,9 @@ def generate_lineup_from_config(config):
     )
 
     # Step 2: Draw players on high-res image
-    final = draw_players(field_img, config, offset=offset, field_area_size=field_area_size)
+    final = draw_players(
+        field_img, config, offset=offset, field_area_size=field_area_size
+    )
 
     # Step 3: Downscale for smoothness
     final = final.resize((final.width // SCALE, final.height // SCALE), Image.LANCZOS)

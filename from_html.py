@@ -1,12 +1,14 @@
-import os
+from __future__ import annotations
+
 import time
-from bs4 import BeautifulSoup
 from pathlib import Path
+
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 
 def update_lineup_html(html_path, output_path, numbers):
-    with open(html_path, "r") as file:
+    with open(html_path) as file:
         soup = BeautifulSoup(file, "html.parser")
 
     text_elements = soup.find_all("div", class_="xx")
@@ -24,17 +26,25 @@ def generate_lineup_from_html(output_filename="lineup.png"):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     output_image_path = output_dir / output_filename
-    update_lineup_html("original-html/field.html", "original-html/lineup_ready.html", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+    update_lineup_html(
+        "original-html/field.html",
+        "original-html/lineup_ready.html",
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    )
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-        page.goto(f"file:///mnt/Documents/Documents/Desarrollos/Clientes/FootballMad/images-html/original-html/lineup_ready.html")
+        page.goto(
+            "file:///mnt/Documents/Documents/Desarrollos/Clientes/"
+            "FootballMad/images-html/original-html/lineup_ready.html"
+        )
         page.set_viewport_size({"width": 600, "height": 900})
         page.screenshot(path=str(output_image_path))
         browser.close()
 
     print(f"✅ Screenshot saved to {output_image_path}")
+
 
 if __name__ == "__main__":
     start_time = time.time()

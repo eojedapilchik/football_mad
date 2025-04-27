@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+import json
+from io import BytesIO
+
 import streamlit as st
+
 from formations import formations
 from from_base_images import generate_lineup_from_config
-from io import BytesIO
-import json
 
 st.set_page_config(layout="wide", page_title="Formation Visualizer", page_icon="⚽")
 st.title("⚽ Formation Visualizer")
@@ -20,7 +24,7 @@ with col_dropdown:
         "Choose Formation",
         list(formations.keys()),
         index=list(formations.keys()).index(formation_name),
-        label_visibility="collapsed"
+        label_visibility="collapsed",
     )
     st.session_state["formation_name"] = formation_name
 
@@ -33,16 +37,21 @@ col1, col2 = st.columns([1, 1.2])
 with col1:
     st.subheader("📊 Formation Coordinates")
     coords = st.data_editor(
-        [{"number": i + 1, "x": round(x, 2), "y": round(y, 2)} for i, (x, y) in enumerate(default_coords)],
+        [
+            {"number": i + 1, "x": round(x, 2), "y": round(y, 2)}
+            for i, (x, y) in enumerate(default_coords)
+        ],
         column_order=["number", "x", "y"],
         column_config={
-            "number": st.column_config.NumberColumn("No.", width="small", disabled=True),
+            "number": st.column_config.NumberColumn(
+                "No.", width="small", disabled=True
+            ),
             "x": st.column_config.NumberColumn("X"),
             "y": st.column_config.NumberColumn("Y"),
         },
         use_container_width=True,
         hide_index=True,
-        num_rows="fixed"
+        num_rows="fixed",
     )
 
     st.markdown("### ⚙️ Customize Colors")
@@ -58,7 +67,7 @@ positions = [
     {
         "number": row["number"],
         "x": row["x"],
-        "y": (1.0 - row["y"]) if flip_vertical else row["y"]
+        "y": (1.0 - row["y"]) if flip_vertical else row["y"],
     }
     for row in coords
 ]
@@ -70,7 +79,7 @@ config = {
     "field_color": field_color,
     "circle_radius": 20,
     "number_font_size": 18,
-    "positions": positions
+    "positions": positions,
 }
 
 # Generate image
@@ -101,7 +110,7 @@ with col_dl:
         }
         </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
     with st.container():
@@ -111,13 +120,13 @@ with col_dl:
             buf.getvalue(),
             file_name=f"{formation_slug}.png",
             mime="image/png",
-            key="png_download"
+            key="png_download",
         )
         st.download_button(
             "⬇️ Download JSON",
             json.dumps(config, indent=2),
             file_name=f"{formation_slug}.json",
             mime="application/json",
-            key="json_download"
+            key="json_download",
         )
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)

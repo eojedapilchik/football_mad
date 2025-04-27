@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+import hashlib
 import os
 import time
-import hashlib
+from datetime import datetime
+
 import requests
-from dotenv import load_dotenv
-from datetime import datetime, timezone
 from dateutil.parser import parse as parse_date
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -24,23 +27,20 @@ def get_access_token(outlet: str, secret: str) -> str:
     post_url = f"https://oauth.performgroup.com/oauth/token/{outlet}?_fmt=json&_rt=b"
 
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': f'Basic {unique_hash}',
-        'Timestamp': str(timestamp)
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": f"Basic {unique_hash}",
+        "Timestamp": str(timestamp),
     }
 
-    body = {
-        'grant_type': 'client_credentials',
-        'scope': 'b2b-feeds-auth'
-    }
+    body = {"grant_type": "client_credentials", "scope": "b2b-feeds-auth"}
 
     response = requests.post(post_url, data=body, headers=headers)
     response.raise_for_status()
-    return response.json()['access_token']
+    return response.json()["access_token"]
 
 
 def get_tournament_calendar(access_token: str, outlet: str) -> str:
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {"Authorization": f"Bearer {access_token}"}
     url = (
         f"https://api.performfeeds.com/soccerdata/tournamentcalendar/{outlet}/active"
         "?_rt=b&_fmt=json&comp=2kwbbcootiqqgmrzs6o5inle5"
@@ -58,7 +58,7 @@ def get_tournament_calendar(access_token: str, outlet: str) -> str:
 
 
 def get_fixture_uuids(access_token: str, outlet: str, tournament_id: str) -> list[str]:
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {"Authorization": f"Bearer {access_token}"}
     url = (
         f"https://api.performfeeds.com/soccerdata/tournamentschedule/{outlet}"
         f"?tmcl={tournament_id}&_fmt=json&_rt=b"
@@ -79,7 +79,6 @@ def get_fixture_uuids(access_token: str, outlet: str, tournament_id: str) -> lis
                 fixture_uuids.append(match["id"])
 
     return fixture_uuids
-
 
 
 def main():
