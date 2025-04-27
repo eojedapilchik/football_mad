@@ -4,3 +4,5 @@ beautifulsoup4~=4.13.4
 Pillow
 cairosvg
 streamlit
+python-dotenv
+websockets
