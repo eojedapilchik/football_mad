@@ -32,6 +32,5 @@ async def receive_match_events(request: Request, event: dict):
 
     # Process the event here
     logging.info(f"Received match event: {event}")
-    logging.info(f"headers: {dict(request.headers)}")
 
     return {"status": "success", "event": event}
