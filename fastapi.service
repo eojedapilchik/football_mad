@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve your-api
+After=network.target
+
+[Service]
+User=automation
+Group=www-data
+WorkingDirectory=/home/automation/service
+Environment="PATH=/home/automation/service/venv/bin"
+ExecStart=/home/automation/service/venv/bin/gunicorn -c /home/automation/service/gunicorn_conf.py app.main:app
+
+[Install]
+WantedBy=multi-user.target

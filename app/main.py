@@ -1,13 +1,17 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+logging.basicConfig(
+    filename="match_events.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
 app = FastAPI()
 
-# Define your allowed IP(s)
-ALLOWED_IPS = {"127.0.0.1", "::1"}  # localhost IPv4 and IPv6
-
-
-# You can add your server's public IP here too
+ALLOWED_IPS = {"127.0.0.1", "::1"}
 
 
 @app.get("/")
@@ -18,13 +22,16 @@ def read_root():
 @app.post("/match/events")
 async def receive_match_events(request: Request, event: dict):
     client_host = request.client.host
-    print(f"Request received from IP: {client_host}")
+    logging.info(f"Request received from IP: {client_host}")
 
     if client_host not in ALLOWED_IPS:
+        logging.warning(f"Unauthorized access attempt from IP: {client_host}")
         return JSONResponse(
             status_code=403, content={"detail": "Forbidden: Unauthorized IP"}
         )
 
     # Process the event here
-    print(f"Received match event: {event}, headers: {request.headers}")
+    logging.info(f"Received match event: {event}")
+    logging.info(f"headers: {dict(request.headers)}")
+
     return {"status": "success", "event": event}
