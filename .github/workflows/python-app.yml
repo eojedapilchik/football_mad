@@ -44,10 +44,10 @@ jobs:
       - name: Test with pytest
         run: |
           pytest || echo "No tests found yet. Skipping test failures."
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_SERVER_IP }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: ${{ vars.DEPLOY_SCRIPT }}
+      #- name: Deploy to server via SSH
+      #  uses: appleboy/ssh-action@v1
+      #  with:
+      #    host: ${{ secrets.SSH_SERVER_IP }}
+      #    username: ${{ secrets.SSH_USERNAME }}
+      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #    script: ${{ vars.DEPLOY_SCRIPT }}
