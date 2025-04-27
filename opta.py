@@ -34,7 +34,7 @@ def get_access_token(outlet: str, secret: str) -> str:
 
     body = {"grant_type": "client_credentials", "scope": "b2b-feeds-auth"}
 
-    response = requests.post(post_url, data=body, headers=headers)
+    response = requests.post(post_url, data=body, headers=headers, timeout=90)
     response.raise_for_status()
     return response.json()["access_token"]
 
@@ -46,7 +46,7 @@ def get_tournament_calendar(access_token: str, outlet: str) -> str:
         "?_rt=b&_fmt=json&comp=2kwbbcootiqqgmrzs6o5inle5"
     )
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=90)
     response.raise_for_status()
     data = response.json()
     print(data)
@@ -64,7 +64,7 @@ def get_fixture_uuids(access_token: str, outlet: str, tournament_id: str) -> lis
         f"?tmcl={tournament_id}&_fmt=json&_rt=b"
     )
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=90)
     response.raise_for_status()
     data = response.json()
     print(data)
