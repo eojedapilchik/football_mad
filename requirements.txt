@@ -9,3 +9,7 @@ websockets
 fastapi
 uvicorn[standard]
 gunicorn
+pika
+celery
+flower
+redis
