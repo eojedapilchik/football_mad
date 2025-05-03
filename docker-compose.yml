@@ -3,11 +3,11 @@ services:
     image: rabbitmq:4.1.0-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"    # AMQP protocol port
-      - "15672:15672"  # Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     hostname: rabbit
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
@@ -22,31 +22,29 @@ services:
     build: .
     restart: always
     environment:
-      - BROKER_CREDENTIALS=pyamqp://guest:guest@rabbitmq//
-      - RESULT_BACKEND=redis://redis:6379/0
+      - BROKER_CREDENTIALS=${BROKER_URL}
+      - RESULT_BACKEND=${RESULT_BACKEND}
     depends_on:
       - rabbitmq
       - redis
     deploy:
-      replicas: 5  # This starts 5 workers in swarm mode (you can also use scale manually)
+      replicas: 5
 
   flower:
     image: mher/flower
     ports:
       - "5555:5555"
     environment:
-      - CELERY_BROKER_URL=pyamqp://guest:guest@rabbitmq//
+      - CELERY_BROKER_URL=${BROKER_URL}
       - FLOWER_PORT=5555
-      - FLOWER_BASIC_AUTH=guest:guest
+      - FLOWER_BASIC_AUTH=${FLOWER_BASIC_AUTH}
     depends_on:
       - rabbitmq
       - redis
     command: >
       celery flower
-      --broker=pyamqp://guest:guest@rabbitmq//
-      --broker_api=http://guest:guest@rabbitmq:15672/api/
-
-
+      --broker=${BROKER_URL}
+      --broker_api=http://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:15672/api/
 
 volumes:
   rabbitmq_data:

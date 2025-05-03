@@ -3,12 +3,12 @@ import os
 from celery import Celery
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=".env.local")
 
-broker_url = os.getenv("BROKER_CREDENTIALS")
+broker_url = os.getenv("BROKER_URL")
 
 if not broker_url:
-    raise RuntimeError("Missing BROKER_CREDENTIALS in .env file")
+    raise RuntimeError("Missing BROKER_URL in .env file")
 
 app = Celery(
     "process_match_event",
