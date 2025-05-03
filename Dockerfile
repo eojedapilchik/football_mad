@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/
 # Copy code
 COPY . /app
 
+COPY footballmad-52be88097f72.json /app/footballmad-52be88097f72.json
+
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 

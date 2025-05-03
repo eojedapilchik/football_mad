@@ -28,7 +28,7 @@ services:
       - rabbitmq
       - redis
     deploy:
-      replicas: 5
+      replicas: 1
 
   flower:
     image: mher/flower
