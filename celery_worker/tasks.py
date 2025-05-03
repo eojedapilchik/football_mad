@@ -28,6 +28,7 @@ def process_match_event(event):
         return {"status": "error", "message": "No event data provided"}
 
     results = []
+    event = event[0]
     for e in event.get("matchDetails", {}).get("event", []):
         opta_id = e.get("eventId")
         if opta_id is None:
