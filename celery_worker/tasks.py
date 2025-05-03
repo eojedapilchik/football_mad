@@ -102,6 +102,6 @@ def process_match_event(event):
         ]
         gsheet_service.append_row(row, tab_name="game events")
         print(f"✅ Row appended: {row}")
-        time.sleep(10)  # Sleep to avoid hitting Google Sheets API rate limits
+        time.sleep(4)  # Sleep to avoid hitting Google Sheets API rate limits
 
     return {"status": "ok", "processed": len(results), "details": results}

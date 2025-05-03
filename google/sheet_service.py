@@ -2,6 +2,7 @@ from typing import Optional
 
 import gspread
 from google.oauth2 import service_account
+from gspread.utils import InsertDataOption
 
 
 class GoogleSheetService:
@@ -34,7 +35,13 @@ class GoogleSheetService:
         :param tab_name: The name of the tab (sheet) to append to. Defaults to the first sheet.
         """
         worksheet = self._get_worksheet(tab_name)
-        worksheet.append_row(values)
+        response = worksheet.append_row(
+            values, insert_data_option=InsertDataOption.insert_rows
+        )
+        # if response:
+        #     print(f" Response GSHEET {response}")
+        # else:
+        #     print("❌ Failed to append row.")
 
     def get_all_rows(self, tab_name: Optional[str] = None) -> list[list[str]]:
         """
