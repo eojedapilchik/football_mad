@@ -3,6 +3,8 @@ import os
 from celery import Celery
 from dotenv import load_dotenv
 
+from directus.directus_service import DirectusService
+
 load_dotenv()
 
 broker_url = os.getenv("BROKER_URL")
@@ -15,8 +17,21 @@ app = Celery(
     broker=broker_url,  # RabbitMQ broker
 )
 
+directus = DirectusService()
+
 
 @app.task(name="process_match_event")
 def process_match_event(event):
     print(f"✅ Received event: {event}")
-    # Here you could insert into MongoDB or process the data
+    if not event.get("liveData"):
+        print("⚠️ No liveData in event")
+        return
+
+    for e in event["liveData"].get("matchDetails", {}).get("event", []):
+        opta_id = e.get("eventId")
+        if opta_id is None:
+            continue
+
+        qualifier = directus.get_event_qualifier_by_opta_id(opta_id)
+        qualifier_name = qualifier.get("name") if qualifier else "Unknown"
+        print(f"🔍 Qualifier for opta_id {opta_id}: {qualifier_name}")

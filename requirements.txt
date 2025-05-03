@@ -13,3 +13,5 @@ pika
 celery
 flower
 redis
+httpx
+pydantic
