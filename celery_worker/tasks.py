@@ -25,8 +25,9 @@ def process_match_event(event):
     print(f"✅ Received event: {event}")
     if not event.get("liveData"):
         print("⚠️ No liveData in event")
-        return
+        return "No liveData in event"
 
+    results = []
     for e in event["liveData"].get("matchDetails", {}).get("event", []):
         opta_id = e.get("eventId")
         if opta_id is None:
@@ -35,3 +36,6 @@ def process_match_event(event):
         qualifier = directus.get_event_qualifier_by_opta_id(opta_id)
         qualifier_name = qualifier.get("name") if qualifier else "Unknown"
         print(f"🔍 Qualifier for opta_id {opta_id}: {qualifier_name}")
+        results.append({"opta_id": opta_id, "qualifier_name": qualifier_name})
+
+    return {"status": "ok", "processed": len(results), "details": results}
