@@ -26,7 +26,9 @@ sudo systemctl restart $SERVICE_NAME
 echo ">>> Stopping Docker Compose services..."
 docker compose -f "$DOCKER_COMPOSE_FILE" down
 
-echo ">>> Building Docker Compose services..."
+export COMPOSE_BAKE=true
+
+echo ">>> Building Docker Compose services using Bake..."
 docker compose -f "$DOCKER_COMPOSE_FILE" build
 
 echo ">>> Starting Docker Compose services..."
