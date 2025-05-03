@@ -12,4 +12,4 @@ COPY . /app
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["celery", "-A", "celery_worker.tasks", "worker", "--loglevel=info"]
+CMD ["celery", "-A", "celery_worker.tasks", "worker", "--loglevel=info", "-E"]
