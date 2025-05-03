@@ -23,12 +23,12 @@ directus = DirectusService()
 @app.task(name="process_match_event")
 def process_match_event(event):
     print(f"✅ Received event: {event}")
-    if not event.get("liveData"):
-        print("⚠️ No liveData in event")
-        return "No liveData in event"
+    if not event or len(event) == 0:
+        print("❌ No event data provided")
+        return {"status": "error", "message": "No event data provided"}
 
     results = []
-    for e in event["liveData"].get("matchDetails", {}).get("event", []):
+    for e in event.get("matchDetails", {}).get("event", []):
         opta_id = e.get("eventId")
         if opta_id is None:
             continue
