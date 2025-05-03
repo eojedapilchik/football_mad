@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import time
 
 from celery import Celery
@@ -102,6 +103,7 @@ def process_match_event(event):
         ]
         gsheet_service.append_row(row, tab_name="game events")
         print(f"✅ Row appended: {row}")
-        time.sleep(4)  # Sleep to avoid hitting Google Sheets API rate limits
+        # random sleep to avoid hitting Google Sheets API rate limits
+        time.sleep(random.uniform(4.5, 7.5))
 
     return {"status": "ok", "processed": len(results), "details": results}
