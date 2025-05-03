@@ -4,6 +4,7 @@
 PROJECT_DIR="/home/automation/service"
 VENV_DIR="$PROJECT_DIR/venv"
 SERVICE_NAME="fastapi"
+DOCKER_COMPOSE_FILE="$PROJECT_DIR/docker-compose.yml"
 
 echo ">>> Pulling latest code..."
 if [ ! -d "$PROJECT_DIR" ]; then
@@ -21,5 +22,17 @@ deactivate
 
 echo ">>> Restarting the service..."
 sudo systemctl restart $SERVICE_NAME
+
+echo ">>> Stopping Docker Compose services..."
+docker compose -f "$DOCKER_COMPOSE_FILE" down
+
+echo ">>> Building Docker Compose services..."
+docker compose -f "$DOCKER_COMPOSE_FILE" build
+
+echo ">>> Starting Docker Compose services..."
+docker compose -f "$DOCKER_COMPOSE_FILE" up -d
+
+echo ">>> Restarting the system service ($SERVICE_NAME)..."
+sudo systemctl restart "$SERVICE_NAME"
 
 echo ">>> Deployment finished!"
