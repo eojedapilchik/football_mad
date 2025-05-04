@@ -4,8 +4,7 @@ import time
 
 from directus.directus_service import DirectusService
 from google.sheet_service import GoogleSheetService
-from image_processor.image_service import generate_cards_image, \
-    generate_goal_image
+from image_processor.image_service import generate_cards_image, generate_goal_image
 from opta.opta_service import PerformFeedsService
 
 YELLOW_CARD_QUALIFIER_ID = 31
@@ -34,11 +33,9 @@ class MatchEventService:
         elif qualifier_id == RED_CARD_QUALIFIER_ID:
             color = "red"
         else:
-            print(
-                f"⚠️ Unknown card qualifierId: {qualifier_id} value: {value}")
+            print(f"⚠️ Unknown card qualifierId: {qualifier_id} value: {value}")
             return
-        print(
-            f" -> Handling {color} card: {json.dumps(qualifier_id, indent=2)}")
+        print(f" -> Handling {color} card: {json.dumps(qualifier_id, indent=2)}")
         generate_cards_image(
             {
                 "card_color": color,
@@ -48,7 +45,7 @@ class MatchEventService:
         )
 
     def _handle_goal(self, event_data) -> None:
-        print(f"⚽️ Processing goal event")
+        print("⚽️ Processing goal event")
         player = event_data.get("player")
         team = event_data.get("team")
         if not player:
@@ -63,11 +60,11 @@ class MatchEventService:
             print("❌ No current data found for fixture ID")
             return
         scores = (
-            current_data.get("liveData", {}).get("matchDetails", {}).get(
-                "scores", {})
+            current_data.get("liveData", {}).get("matchDetails", {}).get("scores", {})
         )
         print(
-            f"🟩 Current data for fixture ID {fixture_id}: {json.dumps(scores, indent=2)}"
+            f"🟩 Current data for fixture ID {fixture_id}: "
+            f"{json.dumps(scores, indent=2)}"
         )
         generate_goal_image(
             {
@@ -80,8 +77,7 @@ class MatchEventService:
     def process_event(self, event):
         if not event or not event.get("matchDetails"):
             print("❌ No valid event data provided")
-            return {"status": "error",
-                    "message": "Invalid or empty event data"}
+            return {"status": "error", "message": "Invalid or empty event data"}
 
         match_details = event["matchDetails"]
         fixture_id = match_details.get("id")
@@ -95,6 +91,9 @@ class MatchEventService:
         return {"status": "ok", "processed": len(results), "details": results}
 
     def _process_single_event(self, e, fixture_id):
+        if not isinstance(e, dict):
+            print(f"❌ Invalid event data format {e}")
+            return None
         opta_id = e.get("id")
         print(f"🔍 Processing event: {opta_id}")
         type_id = e.get("typeId")
@@ -128,8 +127,7 @@ class MatchEventService:
         if type_id == GOAL_EVENT_TYPE_ID:
             self._handle_goal(event_data)
 
-        qualifiers_str = self._process_qualifiers(e.get("qualifier", []),
-                                                  event_data)
+        qualifiers_str = self._process_qualifiers(e.get("qualifier", []), event_data)
 
         row = [
             current_time,
@@ -149,8 +147,7 @@ class MatchEventService:
 
         self.gsheet_service.append_row(row, tab_name="game events")
         print(f"✅ Row appended: {row}")
-        time.sleep(
-            random.uniform(4.5, 7.5))  # To respect Google Sheets rate limits
+        time.sleep(random.uniform(4.5, 7.5))  # To respect Google Sheets rate limits
 
         return event_data
 
@@ -165,8 +162,7 @@ class MatchEventService:
                 if handler:
                     handler(qualifier_id, value, event_data)
 
-                resolved = self.directus.get_event_qualifier_by_opta_id(
-                    qualifier_id)
+                resolved = self.directus.get_event_qualifier_by_opta_id(qualifier_id)
                 name = resolved.get("name") if resolved else "Unknown"
                 parts.append(f"{name} ({value})")
         return ", ".join(parts)

@@ -44,8 +44,7 @@ class HtmlGeneratorService:
         html_path, _ = prepare_html_output(html, filename, use_temp_html=False)
         print(f"✅ HTML saved to {html_path}")
 
-    def generate_goal_html(self, data: dict[str, Any],
-                           save_to_disk=False) -> str:
+    def generate_goal_html(self, data: dict[str, Any], save_to_disk=False) -> str:
         player_name = data.get("player_name", "Unknown")
         player_photo_url = data.get("player_photo_url", "")
         team_goal_template_url = data.get("team_goal_template_url", "")
@@ -68,8 +67,7 @@ class HtmlGeneratorService:
 
         return html
 
-    def generate_cards_html(self, data: dict[str, Any],
-                            save_to_disk=False) -> str:
+    def generate_cards_html(self, data: dict[str, Any], save_to_disk=False) -> str:
         card_color = data.get("card_color")
         if card_color not in ("red", "yellow"):
             raise ValueError("Invalid card_color. Expected 'red' or 'yellow'.")
@@ -87,8 +85,7 @@ class HtmlGeneratorService:
         player_image_url = self._get_player_image_url(player_photo_url)
 
         html = self._build_html(css, player_image_url, player_name)
-        print(
-            f"✅ HTML generated for {card_color} card and player: {player_name}")
+        print(f"✅ HTML generated for {card_color} card and player: {player_name}")
         if save_to_disk:
             self._save_to_disk(html, player_name, f"{card_color}_card")
 

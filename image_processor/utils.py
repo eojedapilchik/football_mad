@@ -164,14 +164,15 @@ def sanitize_filename(name: str) -> str:
 
 
 def prepare_html_output(
-        html: str, filename: str, use_temp_html: bool = True
+    html: str, filename: str, use_temp_html: bool = True
 ) -> tuple[str, str]:
     """
     Prepares HTML and image output paths.
 
     :param html: HTML content to write
     :param filename: Desired output image filename (e.g., "rendered.png")
-    :param use_temp_html: If True, saves HTML to a temporary file; otherwise, saves it under IMAGE_OUTPUT_DIR
+    :param use_temp_html: If True, saves HTML to a temporary file;
+            otherwise, saves it under IMAGE_OUTPUT_DIR
     :return: Tuple (html_path, image_output_path)
     """
     import os
@@ -180,8 +181,7 @@ def prepare_html_output(
 
     output_dir = os.getenv("IMAGE_OUTPUT_DIR")
     if not output_dir:
-        raise ValueError(
-            "❌ IMAGE_OUTPUT_DIR not set in environment variables.")
+        raise ValueError("❌ IMAGE_OUTPUT_DIR not set in environment variables.")
 
     output_dir_path = Path(output_dir)
     output_dir_path.mkdir(parents=True, exist_ok=True)
@@ -189,7 +189,7 @@ def prepare_html_output(
     if use_temp_html:
         # Save to a temporary HTML file (for tools like Playwright)
         with tempfile.NamedTemporaryFile(
-                suffix=".html", delete=False, mode="w", encoding="utf-8"
+            suffix=".html", delete=False, mode="w", encoding="utf-8"
         ) as tmp_file:
             tmp_file.write(html)
             html_path = tmp_file.name
@@ -203,10 +203,10 @@ def prepare_html_output(
 
 
 def render_html_to_image(
-        html: str,
-        output_filename: str = "rendered.png",
-        width: int = 1920,
-        height: int = 1920,
+    html: str,
+    output_filename: str = "rendered.png",
+    width: int = 1920,
+    height: int = 1920,
 ) -> str:
     """Render HTML using Playwright."""
 
@@ -228,7 +228,7 @@ def render_html_to_image(
 
 
 def render_html_to_image_wkhtml(
-        html: str, output_filename: str = "rendered.png"
+    html: str, output_filename: str = "rendered.png"
 ) -> str:
     import subprocess
 

@@ -7,8 +7,7 @@ from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 from image_processor.html_generator_service import HtmlGeneratorService
-from image_processor.utils import render_html_to_image, \
-    render_html_to_image_wkhtml
+from image_processor.utils import render_html_to_image, render_html_to_image_wkhtml
 
 load_dotenv()
 
@@ -53,34 +52,36 @@ def generate_cards_image(data: dict[str, Any]) -> None:
     render_html_to_image(html, filename_2)
 
 
-def generate_game_status_html(data):
-    home_team = data["home_team"]
-    away_team = data["away_team"]
-    status = data["status"]
-    score = data["score"].strip("[]").split("-")
-    home_score, away_score = score[0], score[1]
-    goal_scorers = process_goal_events(data["events"])
-
-    html = f"""
-    <div class="container">
-        <p>Home Team: {home_team["name"]}</p>
-        <p>Home Team Logo: {home_team["logo"][:20]}...</p>
-        <p>Away Team: {away_team["name"]}</p>
-        <p>Away Team Logo: {away_team["logo"][:20]}...</p>
-        <p>Status: {status}</p>
-        <p>Home Team Score: {home_score}</p>
-        <p>Away Team Score: {away_score}</p>
-        <div>
-            <h3>Home team scorers:</h3>
-            {''.join([f"<p>{scorer['player_name']}: {scorer['minute']}'</p>" for scorer in goal_scorers['home_team_scorers']])}
-        </div>
-        <div>
-            <h3>Away team scorers:</h3>
-            {''.join([f"<p>{scorer['player_name']}: {scorer['minute']}'</p>" for scorer in goal_scorers['away_team_scorers']])}
-        </div>
-    </div>
-    """
-    return {"html": html, "css": ""}
+# def generate_game_status_html(data):
+#     home_team = data["home_team"]
+#     away_team = data["away_team"]
+#     status = data["status"]
+#     score = data["score"].strip("[]").split("-")
+#     home_score, away_score = score[0], score[1]
+#     goal_scorers = process_goal_events(data["events"])
+#
+#     html = f"""
+#     <div class="container">
+#         <p>Home Team: {home_team["name"]}</p>
+#         <p>Home Team Logo: {home_team["logo"][:20]}...</p>
+#         <p>Away Team: {away_team["name"]}</p>
+#         <p>Away Team Logo: {away_team["logo"][:20]}...</p>
+#         <p>Status: {status}</p>
+#         <p>Home Team Score: {home_score}</p>
+#         <p>Away Team Score: {away_score}</p>
+#         <div>
+#             <h3>Home team scorers:</h3>
+#             {''.join([f"<p>{scorer['player_name']}: {scorer['minute']}'</p>"
+#             for scorer in goal_scorers['home_team_scorers']])}
+#         </div>
+#         <div>
+#             <h3>Away team scorers:</h3>
+#             {''.join([f"<p>{scorer['player_name']}: {scorer['minute']}'</p>"
+#             for scorer in goal_scorers['away_team_scorers']])}
+#         </div>
+#     </div>
+#     """
+#     return {"html": html, "css": ""}
 
 
 def format_date_and_time(date_str: str, time_str: str):
@@ -91,11 +92,11 @@ def format_date_and_time(date_str: str, time_str: str):
 
     formatted_date = london_dt.strftime("%a %d %b").upper()
     formatted_time = (
-        london_dt.strftime("%H:%M %Z").replace("BST", "BST").replace("GMT",
-                                                                     "GMT")
+        london_dt.strftime("%H:%M %Z").replace("BST", "BST").replace("GMT", "GMT")
     )
 
     return formatted_date, formatted_time
+
 
 # def generate_half_and_full_time_html(data):
 #     home_team = data["home_team"]
@@ -107,8 +108,10 @@ def format_date_and_time(date_str: str, time_str: str):
 #     html = f"""
 #         <div class="overlay">
 #             <div class="hashtags">
-#                 <span class="hashtag"><span class="hashtag-symbol">#</span>{home_team["hashtag"]}{away_team["hashtag"]}</span>
-#                 <span class="hashtag"><span class="hashtag-symbol">#</span>{data["league_hashtag"]}</span>
+#                 <span class="hashtag"><span class="hashtag-symbol">#</span>
+#                 {home_team["hashtag"]}{away_team["hashtag"]}</span>
+#                 <span class="hashtag"><span class="hashtag-symbol">#</span>
+#                 {data["league_hashtag"]}</span>
 #             </div>
 #             <div class="team-container home">
 #                 <div class="team-result">{home_team["goals"]}</div>
@@ -138,15 +141,19 @@ def format_date_and_time(date_str: str, time_str: str):
 #     html = f"""
 #         <div class="overlay">
 #             <div class="hashtags">
-#                 <span class="hashtag"><span class="hashtag-symbol">#</span>{home_team["hashtag"]}{away_team["hashtag"]}</span>
-#                 <span class="hashtag"><span class="hashtag-symbol">#</span>{data["league_hashtag"]}</span>
+#                 <span class="hashtag"><span class="hashtag-symbol">#</span>
+#                 {home_team["hashtag"]}{away_team["hashtag"]}</span>
+#                 <span class="hashtag"><span class="hashtag-symbol">#</span>
+#                 {data["league_hashtag"]}</span>
 #             </div>
 #             <div class="team-container home">
-#                 <img class="team-logo" src="{home_team["logo"]}" alt="{home_team["name"]} logo">
+#                 <img class="team-logo" src="{home_team["logo"]}"
+#                 alt="{home_team["name"]} logo">
 #                 <div class="team-name">{home_team["name"]}</div>
 #             </div>
 #             <div class="team-container away">
-#                 <img class="team-logo" src="{away_team["logo"]}" alt="{away_team["name"]} logo">
+#                 <img class="team-logo" src="{away_team["logo"]}"
+#                 alt="{away_team["name"]} logo">
 #                 <div class="team-name">{away_team["name"]}</div>
 #             </div>
 #             <div class="date">{formatted_date}</div>

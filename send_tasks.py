@@ -26,8 +26,7 @@ def produce_tasks_from_file(filepath: str):
             try:
                 parsed = json.loads(match.group("json"))
                 match_details = (
-                    parsed.get("content", {}).get("liveData", {}).get(
-                        "matchDetails")
+                    parsed.get("content", {}).get("liveData", {}).get("matchDetails")
                 )
                 if not match_details:
                     print(f"⚠️ No 'matchDetails' found in line {line_number}")
@@ -35,8 +34,7 @@ def produce_tasks_from_file(filepath: str):
 
                 # Send task to Celery
                 app.send_task(
-                    "process_match_event",
-                    args=[{"matchDetails": match_details}]
+                    "process_match_event", args=[{"matchDetails": match_details}]
                 )
                 print(
                     f"📨 Sent task for match ID {match_details.get('id')} (line {line_number})"

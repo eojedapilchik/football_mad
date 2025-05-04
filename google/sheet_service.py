@@ -1,15 +1,16 @@
 from typing import Optional
 
 import gspread
-from google.oauth2 import service_account
 from gspread.utils import InsertDataOption
+
+from google.oauth2 import service_account
 
 
 class GoogleSheetService:
     def __init__(
-            self,
-            sheet_id: str,
-            json_key_filename: str = "footballmad-52be88097f72.json",
+        self,
+        sheet_id: str,
+        json_key_filename: str = "footballmad-52be88097f72.json",
     ):
         """
         Initialize the GoogleSheetService.
@@ -35,9 +36,7 @@ class GoogleSheetService:
         :param tab_name: The name of the tab (sheet) to append to. Defaults to the first sheet.
         """
         worksheet = self._get_worksheet(tab_name)
-        response = worksheet.append_row(
-            values, insert_data_option=InsertDataOption.insert_rows
-        )
+        worksheet.append_row(values, insert_data_option=InsertDataOption.insert_rows)
         # if response:
         #     print(f" Response GSHEET {response}")
         # else:

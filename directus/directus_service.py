@@ -22,8 +22,7 @@ class DirectusQueryParams(BaseModel):
 
 
 class DirectusService:
-    def __init__(self, base_url: Optional[str] = None,
-                 token: Optional[str] = None):
+    def __init__(self, base_url: Optional[str] = None, token: Optional[str] = None):
         if not token:
             token = os.getenv("DIRECTUS_TOKEN")
         if not base_url:
@@ -39,8 +38,7 @@ class DirectusService:
         query = {}
 
         if params.filter:
-            query["filter"] = json.dumps(
-                params.filter)  # ✅ Proper stringified JSON
+            query["filter"] = json.dumps(params.filter)  # ✅ Proper stringified JSON
         if params.limit:
             query["limit"] = params.limit
         if params.sort:
@@ -48,8 +46,7 @@ class DirectusService:
         if params.fields:
             query["fields"] = params.fields
         if params.aggregation_type and params.aggregation_field:
-            query[
-                f"aggregate[{params.aggregation_type}]"] = params.aggregation_field
+            query[f"aggregate[{params.aggregation_type}]"] = params.aggregation_field
         if params.group_by:
             query["groupBy[]"] = params.group_by
 
@@ -57,8 +54,7 @@ class DirectusService:
         response.raise_for_status()
         return response.json()["data"]
 
-    def get_event_qualifier_by_opta_id(self, opta_id: int) -> Optional[
-        dict[str, Any]]:
+    def get_event_qualifier_by_opta_id(self, opta_id: int) -> Optional[dict[str, Any]]:
         params = DirectusQueryParams(
             entity="opta_event_qualifiers",
             filter={"opta_id": {"_eq": opta_id}},
@@ -67,8 +63,7 @@ class DirectusService:
         results = self.get_items(params)
         return results[0] if results else None
 
-    def get_integration_by_opta_id(self, opta_id: int) -> Optional[
-        dict[str, Any]]:
+    def get_integration_by_opta_id(self, opta_id: int) -> Optional[dict[str, Any]]:
         params = DirectusQueryParams(
             entity="integrations",
             filter={"opta_id": {"_eq": opta_id}},
@@ -95,8 +90,7 @@ class DirectusService:
         results = self.get_items(params)
         return results[0] if results else None
 
-    def get_player_by_integration_id(self, opta_id: int) -> Optional[
-        dict[str, Any]]:
+    def get_player_by_integration_id(self, opta_id: int) -> Optional[dict[str, Any]]:
         params = DirectusQueryParams(
             entity="teams",
             filter={"opta_id": {"_eq": opta_id}},
@@ -105,8 +99,7 @@ class DirectusService:
         results = self.get_items(params)
         return results[0] if results else None
 
-    def get_event_type_by_opta_id(self, opta_id: int) -> Optional[
-        dict[str, Any]]:
+    def get_event_type_by_opta_id(self, opta_id: int) -> Optional[dict[str, Any]]:
         params = DirectusQueryParams(
             entity="opta_event_types",
             filter={"opta_id": {"_eq": opta_id}},
@@ -120,8 +113,7 @@ if __name__ == "__main__":
     opta_id_to_test = 21
     service = DirectusService()
 
-    print(
-        f"🔍 Looking for Opta ID {opta_id_to_test} in 'opta_event_qualifiers'...")
+    print(f"🔍 Looking for Opta ID {opta_id_to_test} in 'opta_event_qualifiers'...")
     result = service.get_event_qualifier_by_opta_id(opta_id_to_test)
 
     if result:
