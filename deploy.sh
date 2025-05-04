@@ -12,6 +12,9 @@ if [ ! -d "$PROJECT_DIR" ]; then
     exit 1
 fi
 cd $PROJECT_DIR || { echo "Error: Failed to change directory to $PROJECT_DIR"; exit 1; }
+
+get checkout .
+
 git pull
 
 echo ">>> Activating virtual environment and installing requirements..."
