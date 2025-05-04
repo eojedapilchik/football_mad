@@ -32,6 +32,7 @@ services:
       replicas: 2
     volumes:
       - ${IMAGE_OUTPUT_DIR}:/data/images
+      - ./logs:/app/logs
 
   flower:
     image: mher/flower

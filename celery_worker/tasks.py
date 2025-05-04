@@ -5,6 +5,9 @@ from celery import Celery
 from dotenv import load_dotenv
 
 from celery_worker.match_event_service import MatchEventService
+from utils.logger import setup_logger
+
+logger = setup_logger("match_event_service")
 
 load_dotenv()
 
@@ -24,5 +27,5 @@ match_service = MatchEventService(sheet_id)
 
 @app.task(name="process_match_event")
 def process_match_event(event):
-    print(f"✅ Received event: {json.dumps(event, indent=2)}")
+    logger.info(f"✅ Received event: {json.dumps(event, indent=2)}")
     return match_service.process_event(event)
