@@ -4,11 +4,9 @@ import time
 
 from directus.directus_service import DirectusService
 from google.sheet_service import GoogleSheetService
-from image_processor.image_service import (
-    generate_cards_html,
-    render_html_to_image,
-    render_html_to_image_wkhtml,
-)
+from image_processor.image_service import generate_cards_image, \
+    generate_goal_image
+from opta.opta_service import PerformFeedsService
 
 YELLOW_CARD_QUALIFIER_ID = 31
 RED_CARD_QUALIFIER_ID = 33
@@ -19,13 +17,14 @@ class MatchEventService:
     def __init__(self, sheet_id):
         self.directus = DirectusService()
         self.gsheet_service = GoogleSheetService(sheet_id)
+        self.opta_service = PerformFeedsService()
         self.handler_map = {
             YELLOW_CARD_QUALIFIER_ID: self._handle_cards,
             RED_CARD_QUALIFIER_ID: self._handle_cards,
         }
 
     @staticmethod
-    def _handle_cards(qualifier_id, value, event_data):
+    def _handle_cards(qualifier_id, value, event_data) -> None:
         player = event_data.get("player")
         if not player:
             print("❌ No player data found in event data for card event")
@@ -40,20 +39,43 @@ class MatchEventService:
             return
         print(
             f" -> Handling {color} card: {json.dumps(qualifier_id, indent=2)}")
-        html = generate_cards_html(
+        generate_cards_image(
             {
                 "card_color": color,
                 "player_photo_url": player.get("photo"),
                 "player_name": player.get("name"),
             }
         )
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
-        filename = f"card_{color}_{player.get('name')}_{timestamp}_wkhtml.png"
-        filename2 = f"card_{color}_{player.get('name')}_{timestamp}_playwright.png"
-        image = render_html_to_image_wkhtml(html, filename)
-        image2 = render_html_to_image(html, filename2)
-        # print(f"HTML for red card generated: {html['html']}")
-        return html
+
+    def _handle_goal(self, event_data) -> None:
+        print(f"⚽️ Processing goal event")
+        player = event_data.get("player")
+        team = event_data.get("team")
+        if not player:
+            print("❌ No player data found in event data for goal event")
+            return
+        fixture_id = event_data.get("fixture_id")
+        if not fixture_id:
+            print("❌ No fixture ID found in event data for goal event")
+            return
+        current_data = self.opta_service.get_match_stats(fixture_id)
+        if not current_data:
+            print("❌ No current data found for fixture ID")
+            return
+        scores = (
+            current_data.get("liveData", {}).get("matchDetails", {}).get(
+                "scores", {})
+        )
+        print(
+            f"🟩 Current data for fixture ID {fixture_id}: {json.dumps(scores, indent=2)}"
+        )
+        generate_goal_image(
+            {
+                "player_name": player.get("name"),
+                "player_photo_url": player.get("photo"),
+                "team_goal_template_url": team.get("goal_template"),
+            }
+        )
 
     def process_event(self, event):
         if not event or not event.get("matchDetails"):
@@ -73,9 +95,8 @@ class MatchEventService:
         return {"status": "ok", "processed": len(results), "details": results}
 
     def _process_single_event(self, e, fixture_id):
-        print(f"🔍 Processing event: {json.dumps(e, indent=2)}")
-
         opta_id = e.get("id")
+        print(f"🔍 Processing event: {opta_id}")
         type_id = e.get("typeId")
         contestant_id = e.get("contestantId")
         player_id = e.get("playerId")
@@ -98,10 +119,15 @@ class MatchEventService:
             "current_time": current_time,
             "x": x,
             "y": y,
+            "fixture_id": fixture_id,
             "period": period,
             "time_min": time_min,
             "time_sec": time_sec,
         }
+
+        if type_id == GOAL_EVENT_TYPE_ID:
+            self._handle_goal(event_data)
+
         qualifiers_str = self._process_qualifiers(e.get("qualifier", []),
                                                   event_data)
 
@@ -134,11 +160,11 @@ class MatchEventService:
             qualifier_id = qualifier.get("qualifierId")
             value = qualifier.get("value")
             if qualifier_id is not None:
-                print(
-                    f"🔍 Processing qualifier: {json.dumps(qualifier, indent=2)}")
+                print(f"🔍 Processing qualifier: {qualifier_id}")
                 handler = self.handler_map.get(qualifier_id)
                 if handler:
-                    result = handler(qualifier_id, value, event_data)
+                    handler(qualifier_id, value, event_data)
+
                 resolved = self.directus.get_event_qualifier_by_opta_id(
                     qualifier_id)
                 name = resolved.get("name") if resolved else "Unknown"

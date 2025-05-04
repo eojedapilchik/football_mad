@@ -155,3 +155,92 @@ def generate_css_fixture_and_game_status(template_url: str) -> str:
         color: #ffd700;
     }}
     """
+
+
+def sanitize_filename(name: str) -> str:
+    import re
+
+    return re.sub(r"[^\w\-]", "_", name)
+
+
+def prepare_html_output(
+        html: str, filename: str, use_temp_html: bool = True
+) -> tuple[str, str]:
+    """
+    Prepares HTML and image output paths.
+
+    :param html: HTML content to write
+    :param filename: Desired output image filename (e.g., "rendered.png")
+    :param use_temp_html: If True, saves HTML to a temporary file; otherwise, saves it under IMAGE_OUTPUT_DIR
+    :return: Tuple (html_path, image_output_path)
+    """
+    import os
+    import tempfile
+    from pathlib import Path
+
+    output_dir = os.getenv("IMAGE_OUTPUT_DIR")
+    if not output_dir:
+        raise ValueError(
+            "❌ IMAGE_OUTPUT_DIR not set in environment variables.")
+
+    output_dir_path = Path(output_dir)
+    output_dir_path.mkdir(parents=True, exist_ok=True)
+
+    if use_temp_html:
+        # Save to a temporary HTML file (for tools like Playwright)
+        with tempfile.NamedTemporaryFile(
+                suffix=".html", delete=False, mode="w", encoding="utf-8"
+        ) as tmp_file:
+            tmp_file.write(html)
+            html_path = tmp_file.name
+    else:
+        # Save HTML to a named file in the output directory
+        html_path = output_dir_path / filename.replace(".png", ".html")
+        html_path.write_text(html, encoding="utf-8")
+
+    image_path = output_dir_path / filename
+    return str(html_path), str(image_path)
+
+
+def render_html_to_image(
+        html: str,
+        output_filename: str = "rendered.png",
+        width: int = 1920,
+        height: int = 1920,
+) -> str:
+    """Render HTML using Playwright."""
+
+    from playwright.sync_api import sync_playwright
+
+    print("🖼️ Rendering HTML to image using Playwright...")
+    html_path, output_image_path = prepare_html_output(html, output_filename)
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(f"file://{html_path}")
+        page.set_viewport_size({"width": width, "height": height})
+        page.screenshot(path=str(output_image_path))
+        browser.close()
+
+    print(f"✅ Screenshot saved to {output_image_path}")
+    return str(output_image_path)
+
+
+def render_html_to_image_wkhtml(
+        html: str, output_filename: str = "rendered.png"
+) -> str:
+    import subprocess
+
+    """Render HTML using wkhtmltoimage."""
+    print("🖼️ Rendering HTML to image with wkhtmltoimage...")
+    html_path, output_image_path = prepare_html_output(html, output_filename)
+
+    command = ["wkhtmltoimage", html_path, str(output_image_path)]
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        raise RuntimeError(f"wkhtmltoimage failed:\n{result.stderr}")
+
+    print(f"✅ Screenshot saved to {output_image_path}")
+    return str(output_image_path)
