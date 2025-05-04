@@ -1,4 +1,3 @@
-import os
 import time
 from datetime import datetime
 from typing import Any
@@ -8,8 +7,12 @@ from dotenv import load_dotenv
 
 from image_processor.html_generator_service import HtmlGeneratorService
 from image_processor.utils import render_html_to_image, render_html_to_image_wkhtml
+from utils.feature_flags import flags
+from utils.logger import setup_logger
 
 load_dotenv()
+
+logger = setup_logger("image_service")
 
 
 def process_goal_events(events):
@@ -28,7 +31,8 @@ def process_goal_events(events):
 
 
 def generate_goal_image(data: dict[str, Any]) -> None:
-    save_to_disk = os.getenv("SAVE_HTML_TO_DISK", "false").lower() == "true"
+    logger.info("Generating goal image")
+    save_to_disk = flags.save_html_to_disk
     html_generator = HtmlGeneratorService()
     html = html_generator.generate_goal_html(data, save_to_disk)
     timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -40,14 +44,15 @@ def generate_goal_image(data: dict[str, Any]) -> None:
 
 
 def generate_cards_image(data: dict[str, Any]) -> None:
-    save_to_disk = os.getenv("SAVE_HTML_TO_DISK", "false").lower() == "true"
+    logger.info("Generating cards image")
+    save_to_disk = flags.save_html_to_disk
     html_generator = HtmlGeneratorService()
     html = html_generator.generate_cards_html(data, save_to_disk)
     color = data.get("card_color")
     player = data.get("player_name")
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    filename_1 = f"card_{color}_{player.get('name')}_{timestamp}_wkhtml.png"
-    filename_2 = f"card_{color}_{player.get('name')}_{timestamp}_playwright.png"
+    filename_1 = f"card_{color}_{player}_{timestamp}_wkhtml.png"
+    filename_2 = f"card_{color}_{player}_{timestamp}_playwright.png"
     render_html_to_image_wkhtml(html, filename_1)
     render_html_to_image(html, filename_2)
 

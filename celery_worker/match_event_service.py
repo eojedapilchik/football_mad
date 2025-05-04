@@ -8,6 +8,7 @@ from directus.directus_service import DirectusService
 from google.sheet_service import GoogleSheetService
 from image_processor.image_service import generate_cards_image, generate_goal_image
 from opta.opta_service import PerformFeedsService
+from utils.feature_flags import flags
 from utils.logger import setup_logger
 
 logger = setup_logger("match_event_service")
@@ -109,9 +110,10 @@ class MatchEventService:
 
     def process_event(self, event):
         if not event or not event.get("matchDetails"):
-            logger.info("❌ No valid event data provided")
+            logger.warning("❌ No valid event data provided")
             return {"status": "error", "message": "Invalid or empty event data"}
-
+        if flags.debug_mode:
+            logger.info(f"✅ Received event: {json.dumps(event, indent=2)}")
         match_details = event["matchDetails"]
         fixture_id = match_details.get("id")
         raw_events = match_details.get("event")
@@ -120,6 +122,10 @@ class MatchEventService:
         if not raw_events:
             logger.warning("⚠️ No events found in matchDetails")
             return {"status": "ok", "processed": 0, "details": []}
+
+        if flags.save_livescore_events and feed_name == LIVESCORE_FEED_NAME:
+            logger.info("📁 Saving LiveScore event data")
+            save_livescore_event(event, fixture_id)
 
         # Ensure we have a list to iterate
         if isinstance(raw_events, dict):
@@ -139,7 +145,7 @@ class MatchEventService:
             logger.error(f"❌ Invalid event data format {e}")
             return None
         opta_id = e.get("id")
-        logger.info(f"🔍 Processing event: {opta_id} feed: {feed_name}")
+        logger.info(f"⚙️ Processing event: {opta_id} feed: {feed_name}")
         type_id = e.get("typeId")
         contestant_id = e.get("contestantId")
         player_id = e.get("playerId")
@@ -189,8 +195,9 @@ class MatchEventService:
             y,
         ]
 
-        self.gsheet_service.append_row(row, tab_name="game events")
-        print(f"✅ Row appended: {row}")
+        if flags.save_to_gsheet:
+            self.gsheet_service.append_row(row, tab_name="game events")
+            print(f"✅ Row appended: {row}")
         time.sleep(random.uniform(4.5, 7.5))  # To respect Google Sheets rate limits
 
         return event_data

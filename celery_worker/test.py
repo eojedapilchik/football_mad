@@ -1,6 +1,6 @@
 from match_event_service import MatchEventService
 
-event_data = {
+card_event_data = {
     "matchDetails": {
         "id": "ducrivfr5mdk38zys5ytlx638",
         "event": [
@@ -86,5 +86,5 @@ goal_event_data = {
 
 # Use a dummy sheet ID if testing without Google Sheets
 service = MatchEventService("1ogMvKidrN86cMfYe7lii0mEqZ8AWojQ-Fwmm-MBYiQs")
-response = service.process_event(goal_event_data)
+response = service.process_event(card_event_data)
 print(response)
