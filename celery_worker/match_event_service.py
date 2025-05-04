@@ -15,6 +15,7 @@ logger = setup_logger("match_event_service")
 
 YELLOW_CARD_QUALIFIER_ID = 31
 RED_CARD_QUALIFIER_ID = 33
+CARD_EVENT_TYPE_ID = 17
 GOAL_EVENT_TYPE_ID = 16
 LIVESCORE_FEED_NAME = "liveScore"
 
@@ -131,56 +132,65 @@ class MatchEventService:
         if isinstance(raw_events, dict):
             raw_events = [raw_events]
 
-        results = []
+        results = [
+            self._process_single_event(e, fixture_id, feed_name)
+            for e in raw_events
+            if e
+        ]
 
-        for e in raw_events:
-            result = self._process_single_event(e, fixture_id, feed_name)
-            if result:
-                results.append(result)
+        return {
+            "status": "ok",
+            "processed": len([r for r in results if r]),
+            "details": [r for r in results if r],
+        }
 
-        return {"status": "ok", "processed": len(results), "details": results}
+    @staticmethod
+    def _extract_event_metadata(e: dict) -> dict:
+        return {
+            "current_time": e.get("timeStamp"),
+            "x": e.get("x"),
+            "y": e.get("y"),
+            "period": e.get("periodId"),
+            "time_min": e.get("timeMin"),
+            "time_sec": e.get("timeSec"),
+            "time_stamp": e.get("timeStamp"),
+        }
 
     def _process_single_event(self, e, fixture_id, feed_name):
         if not isinstance(e, dict):
             logger.error(f"❌ Invalid event data format {e}")
             return None
+
         opta_id = e.get("id")
         logger.info(f"⚙️ Processing event: {opta_id} feed: {feed_name}")
+
         type_id = e.get("typeId")
         contestant_id = e.get("contestantId")
         player_id = e.get("playerId")
-        current_time = e.get("timeStamp")
-        x = e.get("x")
-        y = e.get("y")
-        period = e.get("periodId")
-        time_min = e.get("timeMin")
-        time_sec = e.get("timeSec")
 
         event_type = self.directus.get_event_type_by_opta_id(type_id)
         team = self.directus.get_team_by_opta_id(contestant_id)
         player = self.directus.get_player_by_opta_id(player_id)
+
+        event_metadata = self._extract_event_metadata(e)
         event_data = {
             "team": team,
             "player": player,
             "opta_id": opta_id,
             "type_id": type_id,
             "contestant_id": contestant_id,
-            "current_time": current_time,
-            "x": x,
-            "y": y,
             "fixture_id": fixture_id,
-            "period": period,
-            "time_min": time_min,
-            "time_sec": time_sec,
+            "feed_name": feed_name,
+            **event_metadata,
         }
 
-        if type_id == GOAL_EVENT_TYPE_ID:
+        if type_id == GOAL_EVENT_TYPE_ID and feed_name != LIVESCORE_FEED_NAME:
             self._handle_goal(event_data)
 
         qualifiers_str = self._process_qualifiers(e.get("qualifier", []), event_data)
 
         row = [
-            current_time,
+            event_metadata["time_stamp"],
             player.get("name") if player else "Unknown",
             team.get("name") if team else "Unknown",
             event_type.get("name") if event_type else "Unknown",
@@ -188,11 +198,11 @@ class MatchEventService:
             opta_id,
             fixture_id,
             feed_name,
-            period,
-            time_min,
-            time_sec,
-            x,
-            y,
+            event_metadata["period"],
+            event_metadata["time_min"],
+            event_metadata["time_sec"],
+            event_metadata["x"],
+            event_metadata["y"],
         ]
 
         if flags.save_to_gsheet:
@@ -203,17 +213,25 @@ class MatchEventService:
         return event_data
 
     def _process_qualifiers(self, qualifiers: list, event_data: dict):
+        type_id = event_data.get("type_id")
+        feed_name = event_data.get("feed_name")
         parts = []
         for qualifier in qualifiers:
             qualifier_id = qualifier.get("qualifierId")
             value = qualifier.get("value")
-            if qualifier_id is not None:
-                logger.info(f"🔍 Processing qualifier: {qualifier_id}")
-                handler = self.handler_map.get(qualifier_id)
-                if handler:
-                    handler(qualifier_id, value, event_data)
+            if qualifier_id is None:
+                continue
 
-                resolved = self.directus.get_event_qualifier_by_opta_id(qualifier_id)
-                name = resolved.get("name") if resolved else "Unknown"
-                parts.append(f"{name} ({value})")
+            logger.info(f"🔍 Processing qualifier: {qualifier_id}")
+            handler = self.handler_map.get(qualifier_id)
+            if (
+                handler
+                and type_id == CARD_EVENT_TYPE_ID
+                and feed_name != LIVESCORE_FEED_NAME
+            ):
+                handler(qualifier_id, value, event_data)
+
+            qualifier_info = self.directus.get_event_qualifier_by_opta_id(qualifier_id)
+            name = qualifier_info.get("name") if qualifier_info else "Unknown"
+            parts.append(f"{name} ({value})")
         return ", ".join(parts)

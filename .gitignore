@@ -6,6 +6,7 @@ Union.svg
 .env.local
 footballmad-52be88097f72.json
 logs
+SDAPI_Result.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

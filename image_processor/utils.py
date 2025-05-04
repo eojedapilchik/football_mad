@@ -1,6 +1,11 @@
 # utils.py
 def generate_css_goal_and_cards(template_url: str) -> str:
     return f"""
+    html, body {{
+        margin: 0;
+      padding: 0;
+    }}
+
     .overlay {{
         position: relative;
         width: 1920px;

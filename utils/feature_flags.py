@@ -40,6 +40,12 @@ class FeatureFlags:
     def debug_mode(self) -> bool:
         return self.is_enabled("DEBUG_MODE")
 
+    def is_feed_name_to_dismiss(self, feed_name) -> bool:
+        return (
+            self.env.get("FEED_NAME_TO_DISMISS_FOR_IMAGES", "").lower()
+            == feed_name.lower()
+        )
+
     @property
     def use_mongo_db(self) -> bool:
         return self.is_enabled("USE_MONGO_DB")
