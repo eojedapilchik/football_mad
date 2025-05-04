@@ -20,7 +20,7 @@ def produce_tasks_from_file(filepath: str):
         for line_number, line in enumerate(file, start=1):
             match = JSON_PATTERN.search(line)
             if not match:
-                print(f"❌ Skipping line {line_number}: no valid JSON found.")
+                print(f"❌ Skipping line {line_number}: {line}")
                 continue
 
             try:

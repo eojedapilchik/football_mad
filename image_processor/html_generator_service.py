@@ -2,6 +2,7 @@ import os
 import time
 from typing import Any
 
+from image_processor.exceptions import PlayerPhotoFilenameNotFoundError
 from image_processor.utils import (
     generate_css_goal_and_cards,
     prepare_html_output,
@@ -54,7 +55,7 @@ class HtmlGeneratorService:
         if not goal_template_url:
             raise ValueError("goal_template_url must be set.")
         if not player_photo_url:
-            raise ValueError("player_photo_url must be set.")
+            raise PlayerPhotoFilenameNotFoundError(player_name)
         template_url = goal_template_url.replace(
             "{{9.goal_template}}", team_goal_template_url
         )
@@ -82,6 +83,8 @@ class HtmlGeneratorService:
 
         player_name = data.get("player_name", "Unknown")
         player_photo_url = data.get("player_photo_url", "")
+        if not player_photo_url:
+            raise PlayerPhotoFilenameNotFoundError(player_name)
         player_image_url = self._get_player_image_url(player_photo_url)
 
         html = self._build_html(css, player_image_url, player_name)

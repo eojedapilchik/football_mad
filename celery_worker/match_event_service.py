@@ -17,7 +17,8 @@ YELLOW_CARD_QUALIFIER_ID = 31
 RED_CARD_QUALIFIER_ID = 33
 CARD_EVENT_TYPE_ID = 17
 GOAL_EVENT_TYPE_ID = 16
-LIVESCORE_FEED_NAME = "liveScore"
+FEED_NAME_SKIPPED_FOR_IMAGES = "matchEvent"
+FEED_NAME_LIVESCORE = "livescore"
 
 
 def save_livescore_event(event, fixture_id):
@@ -71,13 +72,17 @@ class MatchEventService:
             logger.warning(f"⚠️ Unknown card qualifierId: {qualifier_id} value: {value}")
             return
         logger.info(f" -> Handling {color} card: {json.dumps(qualifier_id, indent=2)}")
-        generate_cards_image(
-            {
-                "card_color": color,
-                "player_photo_url": player.get("photo"),
-                "player_name": player.get("name"),
-            }
-        )
+        try:
+            generate_cards_image(
+                {
+                    "card_color": color,
+                    "player_photo_url": player.get("photo"),
+                    "player_name": player.get("name"),
+                }
+            )
+        except Exception as e:
+            logger.error(f"❌ Error generating card image: {e}")
+            return
 
     def _handle_goal(self, event_data) -> None:
         logger.info("⚽️ Processing goal event")
@@ -90,24 +95,35 @@ class MatchEventService:
         if not fixture_id:
             logger.error("❌ No fixture ID found in event data for goal event")
             return
-        current_data = self.opta_service.get_match_stats(fixture_id)
-        if not current_data:
-            logger.error("❌ No current data found for fixture ID")
-            return
-        scores = (
-            current_data.get("liveData", {}).get("matchDetails", {}).get("scores", {})
-        )
+        scores = event_data.get("score", {})
+        if not scores:
+            logger.error("❌ No score data found in event data for goal event")
+        else:
+            scoring_team_id = event_data.get("contestant_id")
+            scoring_team_name = event_data.get("team", {}).get("name")
+            for score in scores:
+                team_id = score.get("contestantId")
+                if team_id == scoring_team_id:
+                    score["team_name"] = scoring_team_name
+                else:
+                    team = self.directus.get_team_by_opta_id(team_id)
+                    score["team_name"] = team.get("name") if team else "Unknown"
+        opta_id = event_data.get("opta_id")
         logger.info(
-            f"🟩 Current data for fixture ID {fixture_id}: "
+            f"🟩 Current data for fixture ID {fixture_id} | event ID {opta_id}: "
             f"{json.dumps(scores, indent=2)}"
         )
-        generate_goal_image(
-            {
-                "player_name": player.get("name"),
-                "player_photo_url": player.get("photo"),
-                "team_goal_template_url": team.get("goal_template"),
-            }
-        )
+        try:
+            generate_goal_image(
+                {
+                    "player_name": player.get("name"),
+                    "player_photo_url": player.get("photo"),
+                    "team_goal_template_url": team.get("goal_template"),
+                }
+            )
+        except Exception as e:
+            logger.error(f"❌ Error generating goal image: {e}")
+            return
 
     def process_event(self, event):
         if not event or not event.get("matchDetails"):
@@ -124,7 +140,7 @@ class MatchEventService:
             logger.warning("⚠️ No events found in matchDetails")
             return {"status": "ok", "processed": 0, "details": []}
 
-        if flags.save_livescore_events and feed_name == LIVESCORE_FEED_NAME:
+        if flags.save_livescore_events and feed_name == FEED_NAME_LIVESCORE:
             logger.info("📁 Saving LiveScore event data")
             save_livescore_event(event, fixture_id)
 
@@ -154,6 +170,7 @@ class MatchEventService:
             "time_min": e.get("timeMin"),
             "time_sec": e.get("timeSec"),
             "time_stamp": e.get("timeStamp"),
+            "score": e.get("score", {}),
         }
 
     def _process_single_event(self, e, fixture_id, feed_name):
@@ -184,7 +201,7 @@ class MatchEventService:
             **event_metadata,
         }
 
-        if type_id == GOAL_EVENT_TYPE_ID and feed_name != LIVESCORE_FEED_NAME:
+        if type_id == GOAL_EVENT_TYPE_ID and feed_name != FEED_NAME_SKIPPED_FOR_IMAGES:
             self._handle_goal(event_data)
 
         qualifiers_str = self._process_qualifiers(e.get("qualifier", []), event_data)
@@ -227,7 +244,7 @@ class MatchEventService:
             if (
                 handler
                 and type_id == CARD_EVENT_TYPE_ID
-                and feed_name != LIVESCORE_FEED_NAME
+                and feed_name != FEED_NAME_SKIPPED_FOR_IMAGES
             ):
                 handler(qualifier_id, value, event_data)
 

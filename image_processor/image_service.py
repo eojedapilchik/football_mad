@@ -31,12 +31,12 @@ def process_goal_events(events):
 
 
 def generate_goal_image(data: dict[str, Any]) -> None:
-    logger.info("Generating goal image")
+    player = data.get("player_name")
+    logger.info(f"Generating goal image for {player}")
     save_to_disk = flags.save_html_to_disk
     html_generator = HtmlGeneratorService()
     html = html_generator.generate_goal_html(data, save_to_disk)
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    player = data.get("player_name")
     filename_1 = f"goal_{player}_{timestamp}_wkhtml.png"
     filename_2 = f"goal_{player}_{timestamp}_playwright.jpg"
     render_html_to_image_wkhtml(html, filename_1)
@@ -44,12 +44,12 @@ def generate_goal_image(data: dict[str, Any]) -> None:
 
 
 def generate_cards_image(data: dict[str, Any]) -> None:
-    logger.info("Generating cards image")
+    player = data.get("player_name")
+    logger.info(f"Generating cards image for {player}")
     save_to_disk = flags.save_html_to_disk
     html_generator = HtmlGeneratorService()
     html = html_generator.generate_cards_html(data, save_to_disk)
     color = data.get("card_color")
-    player = data.get("player_name")
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     filename_1 = f"card_{color}_{player}_{timestamp}_wkhtml.png"
     filename_2 = f"card_{color}_{player}_{timestamp}_playwright.png"
