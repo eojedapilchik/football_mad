@@ -24,11 +24,14 @@ services:
     environment:
       - BROKER_CREDENTIALS=${BROKER_URL}
       - RESULT_BACKEND=${RESULT_BACKEND}
+      - IMAGE_OUTPUT_DIR=/data/images
     depends_on:
       - rabbitmq
       - redis
     deploy:
       replicas: 2
+    volumes:
+      - ${IMAGE_OUTPUT_DIR}:/data/images
 
   flower:
     image: mher/flower
